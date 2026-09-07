@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MTG Deck Tracker</title>
+    <meta
+      name="description"
+      content="Search Scryfall card data, build deck lists, and track owned vs. missing cards."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; connect-src 'self' https://api.scryfall.com; img-src 'self' data: https://*.scryfall.io https://placehold.co; style-src 'self' 'unsafe-inline'; script-src 'self'; upgrade-insecure-requests;"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Magic: the Gathering</p>
+          <h1>Deck Tracker</h1>
+        </div>
+        <button id="clearDeckBtn" class="secondary-btn" type="button">Clear Deck</button>
+      </header>
+
+      <main class="layout">
+        <section class="panel search-panel">
+          <h2>Search cards</h2>
+
+          <div class="search-mode-toggle" role="tablist" aria-label="Search mode">
+            <button class="mode-btn active" data-mode="name" type="button" role="tab" aria-selected="true">Name</button>
+            <button class="mode-btn" data-mode="theme" type="button" role="tab" aria-selected="false">Theme</button>
+          </div>
+
+          <form id="searchForm" class="search-form">
+            <div class="input-group autocomplete-wrap">
+              <input
+                id="searchInput"
+                type="text"
+                placeholder="Search by card name..."
+                aria-label="Card search"
+                autocomplete="off"
+              />
+              <ul id="autocompleteList" class="autocomplete-list hidden" aria-live="polite"></ul>
+            </div>
+            <button class="primary-btn" type="submit">Search</button>
+          </form>
+
+          <div class="theme-presets" id="themePresets">
+            <button type="button" class="chip" data-theme="color>=w type:creature">White Voltron</button>
+            <button type="button" class="chip" data-theme="color>=u o:\"draw a card\"">Blue Control</button>
+            <button type="button" class="chip" data-theme="color>=b type:creature">Black Graveyard</button>
+            <button type="button" class="chip" data-theme="color>=r type:creature">Red Aggro</button>
+            <button type="button" class="chip" data-theme="color>=g type:creature">Green Ramp</button>
+            <button type="button" class="chip" data-theme="t:artifact">Artifacts</button>
+            <button type="button" class="chip" data-theme="o:\"token\"">Token Makers</button>
+            <button type="button" class="chip" data-theme="o:\"proliferate\"">Proliferate</button>
+          </div>
+
+          <p class="helper-text">
+            Theme mode accepts raw Scryfall search grammar such as <strong>color>=w</strong>,
+            <strong>type:creature</strong>, or <strong>o:"draw a card"</strong>.
+          </p>
+
+          <div id="status" class="status" aria-live="polite"></div>
+          <div id="results" class="results" aria-live="polite"></div>
+        </section>
+
+        <aside class="panel deck-panel">
+          <div class="deck-header">
+            <h2>Deck</h2>
+            <span id="deckCountBadge" class="count-badge">0 cards</span>
+          </div>
+
+          <div class="deck-tools">
+            <div class="save-row">
+              <input id="deckNameInput" type="text" placeholder="Deck name" aria-label="Deck name" />
+              <button id="saveDeckBtn" class="secondary-btn" type="button">Save deck</button>
+            </div>
+            <div class="action-row">
+              <button id="exportDeckBtn" class="secondary-btn" type="button">Export deck</button>
+              <button id="importDeckBtn" class="secondary-btn" type="button">Import deck</button>
+              <input id="importDeckInput" type="file" accept=".txt,.csv,text/plain" hidden />
+            </div>
+          </div>
+
+          <div id="savedDecksList" class="saved-decks" aria-live="polite"></div>
+
+          <div class="insights-panel">
+            <h3>Commander insights</h3>
+            <div id="colorIdentitySummary" class="identity-summary"></div>
+            <div id="themeSummary" class="theme-summary"></div>
+            <div class="recommendations-header">
+              <h3>Top archetype recommendations</h3>
+            </div>
+            <div id="archetypeSummary" class="archetype-summary"></div>
+            <div class="recommendations-header">
+              <h3>Best commander fit</h3>
+            </div>
+            <div id="commanderFitSummary" class="commander-fit-summary"></div>
+          </div>
+
+          <div id="deckList" class="deck-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <template id="cardTemplate">
+      <article class="card-item">
+        <img class="card-art" alt="" />
+        <div class="card-body">
+          <header>
+            <div>
+              <h3 class="card-name"></h3>
+              <p class="card-meta"></p>
+            </div>
+            <span class="card-price"></span>
+          </header>
+
+          <div class="card-tags">
+            <span class="mana-cost"></span>
+            <span class="card-type"></span>
+          </div>
+
+          <p class="card-text"></p>
+
+          <div class="card-actions">
+            <button class="primary-btn add-to-deck" type="button">Add to deck</button>
+            <div class="vendor-links">
+              <a class="vendor-link" href="#" target="_blank" rel="noreferrer noopener">TCGPlayer</a>
+              <a class="vendor-link" href="#" target="_blank" rel="noreferrer noopener">Card Kingdom</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
